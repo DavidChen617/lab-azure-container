@@ -35,21 +35,27 @@ jobs:
         with:
           context: ./nginx
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.USERNAME }}/nginx:latest
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.USERNAME }}/nginx:${{ github.sha }}
+            ${{ env.REGISTRY }}/${{ env.USERNAME }}/nginx:latest
 
       - name: Build & Push web
         uses: docker/build-push-action@v6
         with:
           context: ./src/Presentation
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.USERNAME }}/web:latest
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.USERNAME }}/web:${{ github.sha }}
+            ${{ env.REGISTRY }}/${{ env.USERNAME }}/web:latest
 
       - name: Build & Push api
         uses: docker/build-push-action@v6
         with:
           context: ./src/Api
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.USERNAME }}/api:latest
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.USERNAME }}/api:${{ github.sha }}
+            ${{ env.REGISTRY }}/${{ env.USERNAME }}/api:latest
 
   terraform:
     name: Terraform Apply
@@ -57,6 +63,7 @@ jobs:
     needs: build-and-push
     env:
       TF_VAR_ghcr_token: ${{ secrets.GHCR_TOKEN }}
+      TF_VAR_image_tag: ${{ github.sha }}
 
     steps:
       - uses: actions/checkout@v4
