@@ -66,15 +66,23 @@ jobs:
       - name: Import existing resources (if any)
         working-directory: infra
         run: |
-          terraform import azurerm_resource_group.rg \
-            /subscriptions/063697f1-d90f-41b1-a6a9-ebd64fdf3ba2/resourceGroups/final-report-rg \
-            2>/dev/null || true
-          terraform import azurerm_container_app_environment.env \
-            /subscriptions/063697f1-d90f-41b1-a6a9-ebd64fdf3ba2/resourceGroups/final-report-rg/providers/Microsoft.App/managedEnvironments/final-report-env \
-            2>/dev/null || true
-          terraform import azurerm_container_app.app \
-            /subscriptions/063697f1-d90f-41b1-a6a9-ebd64fdf3ba2/resourceGroups/final-report-rg/providers/Microsoft.App/containerApps/final-report-app \
-            2>/dev/null || true
+          SUB="063697f1-d90f-41b1-a6a9-ebd64fdf3ba2"
+          RG="final-report-rg"
+
+          if az group show --name $RG &>/dev/null; then
+            terraform import azurerm_resource_group.rg \
+              /subscriptions/$SUB/resourceGroups/$RG
+          fi
+
+          if az containerapp env show --name final-report-env --resource-group $RG &>/dev/null; then
+            terraform import azurerm_container_app_environment.env \
+              /subscriptions/$SUB/resourceGroups/$RG/providers/Microsoft.App/managedEnvironments/final-report-env
+          fi
+
+          if az containerapp show --name final-report-app --resource-group $RG &>/dev/null; then
+            terraform import azurerm_container_app.app \
+              /subscriptions/$SUB/resourceGroups/$RG/providers/Microsoft.App/containerApps/final-report-app
+          fi
 
       - name: Terraform Apply
         working-directory: infra

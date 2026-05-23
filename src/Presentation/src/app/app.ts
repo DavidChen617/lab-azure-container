@@ -62,7 +62,7 @@ type Weatherforecast = {
 export class App implements OnInit {
   protected data = signal<Weatherforecast[]>([]);
   async ngOnInit(): Promise<void> {
-    this.data.set(await fetch('http://localhost:5159/api/weatherforecast').then((res) => res.json()));
+    this.data.set(await fetch('/api/weatherforecast').then((res) => res.json()));
   }
   protected readonly title = signal('Web');
 }
