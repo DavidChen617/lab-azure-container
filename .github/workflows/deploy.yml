@@ -55,6 +55,8 @@ jobs:
     name: Terraform Apply
     runs-on: self-hosted
     needs: build-and-push
+    env:
+      TF_VAR_ghcr_token: ${{ secrets.GHCR_TOKEN }}
 
     steps:
       - uses: actions/checkout@v4
@@ -87,5 +89,3 @@ jobs:
       - name: Terraform Apply
         working-directory: infra
         run: terraform apply -auto-approve
-        env:
-          TF_VAR_ghcr_token: ${{ secrets.GHCR_TOKEN }}
