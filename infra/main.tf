@@ -36,8 +36,15 @@ resource "azurerm_container_app" "app" {
   resource_group_name          = azurerm_resource_group.rg.name
   revision_mode                = "Single"
 
+  secret {
+    name  = "ghcr-token"
+    value = var.ghcr_token
+  }
+
   registry {
-    server = "ghcr.io"
+    server               = "ghcr.io"
+    username             = var.github_username
+    password_secret_name = "ghcr-token"
   }
 
   ingress {

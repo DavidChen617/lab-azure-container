@@ -79,3 +79,5 @@ jobs:
       - name: Terraform Apply
         working-directory: infra
         run: terraform apply -auto-approve
+        env:
+          TF_VAR_ghcr_token: ${{ secrets.GHCR_TOKEN }}

@@ -22,3 +22,8 @@ variable "image_tag" {
   type    = string
   default = "latest"
 }
+
+variable "ghcr_token" {
+  type      = string
+  sensitive = true
+}
