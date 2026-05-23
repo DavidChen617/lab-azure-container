@@ -4,6 +4,10 @@ on:
   push:
     branches: [main]
 
+concurrency:
+  group: deploy
+  cancel-in-progress: true
+
 env:
   REGISTRY: ghcr.io
   USERNAME: davidchen617
@@ -58,6 +62,19 @@ jobs:
       - name: Terraform Init
         working-directory: infra
         run: terraform init
+
+      - name: Import existing resources (if any)
+        working-directory: infra
+        run: |
+          terraform import azurerm_resource_group.rg \
+            /subscriptions/063697f1-d90f-41b1-a6a9-ebd64fdf3ba2/resourceGroups/final-report-rg \
+            2>/dev/null || true
+          terraform import azurerm_container_app_environment.env \
+            /subscriptions/063697f1-d90f-41b1-a6a9-ebd64fdf3ba2/resourceGroups/final-report-rg/providers/Microsoft.App/managedEnvironments/final-report-env \
+            2>/dev/null || true
+          terraform import azurerm_container_app.app \
+            /subscriptions/063697f1-d90f-41b1-a6a9-ebd64fdf3ba2/resourceGroups/final-report-rg/providers/Microsoft.App/containerApps/final-report-app \
+            2>/dev/null || true
 
       - name: Terraform Apply
         working-directory: infra
