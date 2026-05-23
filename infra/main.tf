@@ -6,12 +6,6 @@ terraform {
     }
   }
 
-  backend "azurerm" {
-    resource_group_name  = "final-report-rg"
-    storage_account_name = "finalreporttfstate"
-    container_name       = "tfstate"
-    key                  = "terraform.tfstate"
-  }
 }
 
 provider "azurerm" {
